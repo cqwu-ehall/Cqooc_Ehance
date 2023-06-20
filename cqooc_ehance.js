@@ -14,6 +14,7 @@
   "use strict";
 
   const searchUrl = `https://www.cqooc.com/json/test/result/search?`;
+  const tasksearchUrl = `https://www.cqooc.com/json/task/result/search?`;
 
   function AddElement(q, score) {
     if (document.getElementById(q) !== null) {
@@ -24,10 +25,55 @@
     } else {
       setTimeout(() => {
         AddElement(q, score);
-      }, 100);
+      }, 1000);
     }
   }
+  if (window.location.pathname === "/learn/mooc/task/do") {
+    const params = new URLSearchParams(window.location.search);
+    const tid = params.get("tid");
+    if (tid === null) {
+      return;
+    }
+    const ts = new Date().getTime();
 
+    function addFileDownload(url) {
+      if (document.getElementById("fileUrl") !== null) {
+        const down = document.createElement("span");
+        down.style.color = "green";
+        down.innerHTML = "&nbsp;&nbsp;下载";
+        down.addEventListener("click", () => {
+          window.open(`https://www.cqooc.com${url}`, "_blank");
+        });
+        document.getElementById("fileUrl").parentNode.appendChild(down);
+      } else {
+        setTimeout(() => {
+          addFileDownload(url);
+        }, 1000);
+      }
+    }
+
+    // 显示文件下载按钮
+    try {
+      GM_xmlhttpRequest({
+        method: "GET",
+        url: tasksearchUrl + `taskId=${tid}&ts=${ts}`,
+        headers: {
+          referer: window.location.href,
+        },
+        onload: function (response) {
+          const jsondata = JSON.parse(response.responseText);
+          if (jsondata.data.length > 0) {
+            const attachment = jsondata.data[0].attachment;
+            if (attachment !== null) {
+              addFileDownload(attachment);
+            }
+          }
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
   if (window.location.pathname === "/learn/mooc/testing/do") {
     const params = new URLSearchParams(window.location.search);
     const tid = params.get("tid");
