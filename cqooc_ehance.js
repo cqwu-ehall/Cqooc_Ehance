@@ -105,49 +105,75 @@
     } catch (error) {
       console.log(error);
     }
-    // 测试复制答案
-    function AddAnserButton() {
-      const scoreDiv = document.getElementById("score");
-      if (scoreDiv !== null) {
-        const buttonDiv = document.createElement("p");
-        buttonDiv.className = "time";
-        const copyButton = document.createElement("span");
-        copyButton.innerHTML = "复制答案&nbsp;&nbsp;";
-        const pasteButton = document.createElement("span");
-        pasteButton.innerHTML = "&nbsp;&nbsp;粘贴答案";
-        buttonDiv.appendChild(copyButton);
-        buttonDiv.appendChild(pasteButton);
-        scoreDiv.appendChild(buttonDiv);
-        copyButton.addEventListener("click", () => {
-          const answer = [];
-          document
-            .querySelectorAll("input[checked=checked]")
-            .forEach((item) => {
-              answer.push(item.id);
-            });
-          GM_setClipboard(answer.join(","));
-          alert("答案已复制到剪贴板");
-        });
-        pasteButton.addEventListener("click", () => {
-          GM_notification({ highlight: true });
-          navigator.clipboard.readText().then((text) => {
-            const answer = text.split(",");
-            answer.forEach((item) => {
-              const input = document.getElementById(item);
-              if (input !== null) {
-                input.click();
-              }
-            });
-            alert("答案已粘贴");
-          });
-        });
-      } else {
-        setTimeout(() => {
-          AddAnserButton();
-        }, 1000);
-      }
-    }
+  }
 
-    AddAnserButton();
+  function createAnswerButton() {
+    const buttonDiv = document.createElement("p");
+    buttonDiv.className = "time";
+    const copyButton = document.createElement("span");
+    copyButton.innerHTML = "复制答案&nbsp;&nbsp;";
+    const pasteButton = document.createElement("span");
+    pasteButton.innerHTML = "&nbsp;&nbsp;粘贴答案";
+    buttonDiv.appendChild(copyButton);
+    buttonDiv.appendChild(pasteButton);
+    copyButton.addEventListener("click", () => {
+      const answer = [];
+      document.querySelectorAll("input[checked]").forEach((item) => {
+        answer.push(item.id);
+      });
+      GM_setClipboard(answer.join(","));
+      alert("答案已复制到剪贴板");
+    });
+    pasteButton.addEventListener("click", () => {
+      GM_notification({ highlight: true });
+      navigator.clipboard.readText().then((text) => {
+        const answer = text.split(",");
+        answer.forEach((item) => {
+          const input = document.getElementById(item);
+          if (input !== null) {
+            input.click();
+          }
+        });
+        alert("答案已粘贴");
+      });
+    });
+    return buttonDiv;
+  }
+
+  if (
+    window.location.pathname === "/learn/mooc/testing/do" ||
+    window.location.pathname === "/learn/mooc/exam/do"
+  ) {
+    // 测试复制答案
+    const buttonDiv = createAnswerButton();
+    if (window.location.pathname === "/learn/mooc/testing/do") {
+      function AddAnserButton() {
+        const scoreDiv = document.getElementById("score");
+        if (scoreDiv !== null) {
+          scoreDiv.appendChild(buttonDiv);
+        } else {
+          setTimeout(() => {
+            AddAnserButton();
+          }, 1000);
+        }
+      }
+
+      AddAnserButton();
+    }
+    // 考试复制答案
+    if (window.location.pathname === "/learn/mooc/exam/do") {
+      function AddAnserButton() {
+        const timeDiv = document.getElementsByClassName("timeout");
+        if (timeDiv.length > 0) {
+          timeDiv[0].appendChild(buttonDiv);
+        } else {
+          setTimeout(() => {
+            AddAnserButton();
+          }, 1000);
+        }
+      }
+
+      AddAnserButton();
+    }
   }
 })();
