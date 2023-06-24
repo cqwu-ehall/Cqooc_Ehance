@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CQOOC Enhance
 // @namespace    https://www.cqooc.com/
-// @version      0.1
+// @version      0.2
 // @description  cqooc enhance
 // @author       omg-xtao
 // @match        https://www.cqooc.com/*
@@ -107,7 +107,7 @@
     }
   }
 
-  function createAnswerButton() {
+  function createAnswerButton(exam) {
     const buttonDiv = document.createElement("p");
     buttonDiv.className = "time";
     const copyButton = document.createElement("span");
@@ -119,7 +119,9 @@
     copyButton.addEventListener("click", () => {
       const answer = [];
       document.querySelectorAll("input[checked]").forEach((item) => {
-        answer.push(item.id);
+        if (item.parentElement.className.indexOf("true") > -1) {
+          answer.push(item.id);
+        }
       });
       GM_setClipboard(answer.join(","));
       alert("答案已复制到剪贴板");
