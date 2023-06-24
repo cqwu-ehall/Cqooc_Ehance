@@ -119,7 +119,11 @@
     copyButton.addEventListener("click", () => {
       const answer = [];
       document.querySelectorAll("input[checked]").forEach((item) => {
-        if (item.parentElement.className.indexOf("true") > -1) {
+        if (exam) {
+          if (item.parentElement.className.indexOf("true") > -1) {
+            answer.push(item.id);
+          }
+        } else {
           answer.push(item.id);
         }
       });
@@ -147,7 +151,9 @@
     window.location.pathname === "/learn/mooc/exam/do"
   ) {
     // 测试复制答案
-    const buttonDiv = createAnswerButton();
+    const buttonDiv = createAnswerButton(
+      window.location.pathname === "/learn/mooc/exam/do"
+    );
     if (window.location.pathname === "/learn/mooc/testing/do") {
       function AddAnserButton() {
         const scoreDiv = document.getElementById("score");
@@ -165,9 +171,11 @@
     // 考试复制答案
     if (window.location.pathname === "/learn/mooc/exam/do") {
       function AddAnserButton() {
-        const timeDiv = document.getElementsByClassName("timeout");
-        if (timeDiv.length > 0) {
-          timeDiv[0].appendChild(buttonDiv);
+        const timeDiv = document.querySelector(".timeout");
+        if (timeDiv !== null) {
+          document
+            .querySelectorAll(".mooc-wrap")[1]
+            .insertBefore(buttonDiv, timeDiv);
         } else {
           setTimeout(() => {
             AddAnserButton();
