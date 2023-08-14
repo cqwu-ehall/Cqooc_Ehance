@@ -1,10 +1,11 @@
 // ==UserScript==
 // @name         CQOOC Enhance
 // @namespace    https://www.cqooc.com/
-// @version      0.2
+// @version      0.21
 // @description  cqooc enhance
 // @author       omg-xtao
 // @match        https://www.cqooc.com/*
+// @icon         https://www.cqooc.com/images/favicon.ico
 // @grant        GM_xmlhttpRequest
 // @grant        GM_setClipboard
 // @grant        GM_notification
@@ -133,12 +134,15 @@
     pasteButton.addEventListener("click", () => {
       GM_notification({ highlight: true });
       navigator.clipboard.readText().then((text) => {
-        const answer = text.split(",");
-        answer.forEach((item) => {
-          const input = document.getElementById(item);
-          if (input !== null) {
-            input.click();
-          }
+        const lines = text.split("\r\n");
+        lines.forEach((line) => {
+            const answer = line.split(",");
+            answer.forEach((item) => {
+            const input = document.getElementById(item);
+            if (input !== null) {
+              input.click();
+            }
+          });
         });
         alert("答案已粘贴");
       });
