@@ -9,6 +9,9 @@
 // @grant        GM_xmlhttpRequest
 // @grant        GM_setClipboard
 // @grant        GM_notification
+// @license      GPL-3.0 License
+// @supportURL   https://github.com/cqwu-ehall/Cqooc_Ehance
+// @homepageURL  https://github.com/cqwu-ehall/Cqooc_Ehance
 // ==/UserScript==
 
 (function () {
